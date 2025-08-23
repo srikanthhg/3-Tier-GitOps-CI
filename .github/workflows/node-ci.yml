@@ -142,6 +142,7 @@ jobs:
       - name: Build and Push Docker image (backend)
         uses: docker/build-push-action@v6
         with:
+          registry: ghcr.io
           context: ./api
           file: ./api/Dockerfile
           push: true
@@ -174,6 +175,7 @@ jobs:
       - name: Build and Push Docker image (frontend)
         uses: docker/build-push-action@v6
         with:
+          registry: ghcr.io
           context: ./client
           file: ./client/Dockerfile
           push: true
