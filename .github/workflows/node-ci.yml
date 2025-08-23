@@ -99,14 +99,23 @@ jobs:
       needs: sonar-backend
       steps:
         - uses: actions/checkout@v4
-
-        - name: Run Snyk to check for vulnerabilities
+        # Scan API folder
+        - name: Snyk Monitor API
           uses: snyk/actions/node@master
-          env:
-            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           with:
             command: monitor
-            args: --severity-threshold=high  #only report on high severity vulnerabilities
+            args: --severity-threshold=high ./api #only report on high severity vulnerabilities
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+        # Scan Client folder
+        - name: Snyk Monitor Client
+          uses: snyk/actions/node@master
+          with:
+            command: monitor
+            args: --severity-threshold=high ./client
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   build_backend_docker_image_and_push:
     runs-on: ubuntu-latest
