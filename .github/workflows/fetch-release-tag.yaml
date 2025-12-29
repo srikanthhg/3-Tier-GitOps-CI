@@ -1,0 +1,31 @@
+name:  release tags
+on:
+  workflow_dispatch:
+jobs:
+  release_tag:
+   runs-on: ubuntu-latest
+   steps:
+   - name: Fetch matching release tags (all pages)
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  run: |
+    # Paste the above script into a file or inline
+    bash << 'EOF'
+    set -eo pipefail
+    OWNER="srikanthhg"
+    REPO="3-Tier-GitOps-CI"
+    TOKEN="${GITHUB_TOKEN}"
+    PATTERN='^1\.0\.[0-9]+-[a-f0-9]{7}$'
+    url="https://api.github.com/repos/${OWNER}/${REPO}/releases"
+
+    while [ -n "$url" ]; do
+      response=$(mktemp)
+      header=$(mktemp)
+      curl -sSL -D "$header" -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${TOKEN}" -H "X-GitHub-Api-Version: 2022-11-28" "$url" -o "$response"
+      
+      jq -r '.[].tag_name' "$response" | grep -E "$PATTERN"
+      
+      url=$(grep -i '^Link:' "$header" | tr ',' '\n' | grep 'rel="next"' | sed -E 's/.*<([^>]+)>.*/\1/' | head -1)
+      rm -f "$response" "$header"
+    done
+    EOF
