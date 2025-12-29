@@ -9,6 +9,8 @@ jobs:
      env:
        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
      run: |
+       
+     run: |
         # Paste the above script into a file or inline
         # bash << 'EOF'
         # set -eo pipefail
